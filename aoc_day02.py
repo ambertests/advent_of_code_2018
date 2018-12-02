@@ -21,26 +21,16 @@ id_list = input.text.split('\n')[:-1]
 # You can multiply those two counts together to get a rudimentary checksum 
 # and compare it to what your device predicts.
 
+# Initial solution was doing the character count by hand
+# but why roll my own when Python has a Counter object?
+from collections import Counter
+
 two_count = 0
 three_count = 0
 for id in id_list:
-    letter_counts = {}
-    has_two = False
-    has_three = False
-    for i in range(len(id)):
-        ch = id[i]
-        if ch in letter_counts:
-            letter_counts[ch] = letter_counts[ch] + 1
-        else:
-            letter_counts[ch] = 1
-    for letter in letter_counts:
-        if not has_two and letter_counts[letter] == 2:
-            two_count = two_count + 1
-            has_two = True
-        if not has_three and letter_counts[letter] == 3:
-            three_count = three_count + 1
-            has_three = True
-
+    counter = Counter(id)
+    if 2 in counter.values(): two_count = two_count + 1
+    if 3 in counter.values(): three_count = three_count + 1
 
 print('Solution 2.1: ', two_count * three_count)
 
@@ -71,7 +61,9 @@ common = ''
 # Very brute force, but it works reasonably quickly
 for a in range(0, len(id_list) - 1):
     id_a = id_list[a]
-    for b in range(1, len(id_list)):
+    # start the inner loop at the next after a
+    # because we don't need to look at the ones behind
+    for b in range(a+1, len(id_list)):
         id_b = id_list[b]
         for i in range(len(id_a)):
             if id_a[i] != id_b[i]:
