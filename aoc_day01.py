@@ -1,23 +1,10 @@
-import requests, sys
-
-# Grab the session cookie from the https://adventofcode.com/2018 site:
-# right-click, Inspect, Application tab, Cookies, session.
-# Call from command line with "python3 aoc_day01.py <session>"
-session = sys.argv[1]
-
-url = "https://adventofcode.com/2018/day/1/input"
-headers = {
-	'cookie': "session=" + session
-	}
-
-input = requests.request("GET", url, headers=headers)
 
 # Part One:
 # Starting with a frequency of zero, what is the resulting frequency 
 # after all of the changes in frequency have been applied?
 
-# cut off the last value because it is an empty string
-int_list = [int(x) for x in input.text.split('\n')[:-1]]
+input = open('input/input01.txt').readlines()
+int_list = [int(x.strip()) for x in input]
 print('Solution 1.1: ', sum(int_list))
 
 # Part Two:

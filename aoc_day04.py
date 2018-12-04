@@ -1,20 +1,7 @@
-import requests, sys
 from datetime import datetime
 from collections import OrderedDict
 
-# Grab the session cookie from the https://adventofcode.com/2018 site:
-# right-click, Inspect, Application tab, Cookies, session.
-# Call from command line with "python3 aoc_day01.py <session>"
-session = sys.argv[1]
-
-url = "https://adventofcode.com/2018/day/4/input"
-headers = {
-	'cookie': "session=" + session
-	}
-
-input = requests.request("GET", url, headers=headers)
-# cut off the last value because it is an empty string
-record_list = input.text.split('\n')[:-1]
+input = [x.strip() for x in open('input/input04.txt').readlines()]
 
 #######
 # Strategy:
@@ -24,7 +11,7 @@ record_list = input.text.split('\n')[:-1]
 #    guard id to number of times they slept in each minute (0-59)
 # 4) Use the guard mapping to calculate the solutions
 ########
-records = [(r[1:17],r[19:]) for r in record_list]
+records = [(r[1:17],r[19:]) for r in input]
 ordered = OrderedDict(sorted(records, key=lambda t: t[0]))
 guards = {}
 current_guard = ''

@@ -1,18 +1,5 @@
-import requests, sys
 
-# Grab the session cookie from the https://adventofcode.com/2018 site:
-# right-click, Inspect, Application tab, Cookies, session.
-# Call from command line with "python3 aoc_day01.py <session>"
-session = sys.argv[1]
-
-url = "https://adventofcode.com/2018/day/2/input"
-headers = {
-	'cookie': "session=" + session
-	}
-
-input = requests.request("GET", url, headers=headers)
-# cut off the last value because it is an empty string
-id_list = input.text.split('\n')[:-1]
+input = [x.strip() for x in open('input/input02.txt').readlines()]
 
 # Part One:
 # To make sure you didn't miss any, you scan the likely candidate boxes again, 
@@ -27,7 +14,7 @@ from collections import Counter
 
 two_count = 0
 three_count = 0
-for id in id_list:
+for id in input:
     counter = Counter(id)
     if 2 in counter.values(): two_count = two_count + 1
     if 3 in counter.values(): three_count = three_count + 1
@@ -59,12 +46,12 @@ print('Solution 2.1: ', two_count * three_count)
 diff_count = 0
 common = ''
 # Very brute force, but it works reasonably quickly
-for a in range(0, len(id_list) - 1):
-    id_a = id_list[a]
+for a in range(0, len(input) - 1):
+    id_a = input[a]
     # start the inner loop at the next after a
     # because we don't need to look at the ones behind
-    for b in range(a+1, len(id_list)):
-        id_b = id_list[b]
+    for b in range(a+1, len(input)):
+        id_b = input[b]
         for i in range(len(id_a)):
             if id_a[i] != id_b[i]:
                 diff_count = diff_count + 1
