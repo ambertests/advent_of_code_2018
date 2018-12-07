@@ -1,33 +1,30 @@
-from collections import OrderedDict
 
 alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
 requirements = {}
 for a in alphabet:
-    requirements[a] = []
+    requirements[a] = set()
 
 path = []
-
 
 for instruction in open('input/input07.txt').readlines():
     # Step M must be finished before step D can begin.
     parent_letter = instruction[5:6]
     child_letter = instruction[36:37]
-    requirements.get(child_letter).append(parent_letter)
-
+    requirements.get(child_letter).add(parent_letter)
 
 while len(path) < len(alphabet):
-    for key in requirements:
+    for letter in alphabet:
+        r_set = requirements[letter]
         # see if there are any requirements that aren't already in the path
-        required = set(requirements[key]).intersection(set(path)) ^ set(requirements[key])
-        if len(required) == 0 and key not in path:
-            path.append(key)
+        required = r_set.intersection(set(path)) ^ r_set
+        if len(required) == 0 and letter not in path:
+            path.append(letter)
             # once we add something new to the path
             # we have to start the loop over again 
             # to maintain alphabetical order
             break
 
 print('Solution 7.1', ''.join(path))
-
 
 elves = [[] for i in range(5)]
 completed = set()
@@ -39,7 +36,8 @@ while len(completed) < len(path):
         if p in in_progress: continue
         work = [p for i in range(60 + alphabet.index(p) + 1)]
         # makes sure all requirements are complete
-        required = set(requirements[p]).intersection(set(completed)) ^ set(requirements[p])
+        r_set = requirements[p]
+        required = r_set.intersection(set(completed)) ^ r_set
         if not required:
             # find a free elf and assign the work
             for elf in elves:
@@ -62,7 +60,6 @@ while len(completed) < len(path):
         elves[i] = remaining
     
     total_time = total_time + min_time
-    
     
 print('Solution 7.2', total_time)
 
