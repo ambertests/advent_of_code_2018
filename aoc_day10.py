@@ -13,6 +13,10 @@ for val in source:
 
 has_straight_line = False
 seconds = 0
+min_x = 10000
+max_x = 0
+min_y = 10000
+max_y = 0
 while not has_straight_line:
     seconds += 1
     # First get all the adjusted x and y values and count them
@@ -36,34 +40,28 @@ while not has_straight_line:
     # Now that we've determined which version of the coordinates
     # is most likely to have legible letters, we can create the grid
     # according to the bounds of the adjusted coordinates
-    min_x = min(x_vals)
-    max_x = max(x_vals)
-    min_y = min(y_vals)
-    max_y = max(y_vals)
+    if min(x_vals) < min_x: min_x = min(x_vals)
+    if max(x_vals) > max_x: max_x = max(x_vals)
+    if min(y_vals) < min_y: min_y = min(y_vals)
+    if max(y_vals) > max_y: max_y = max(y_vals)
 
-    x_offset = abs(min_x) + max_x + 1
-    y_offset = abs(min_y) + max_y + 1
-    offset = max(x_offset, y_offset)
-
-    grid = [['.' for x in range(offset*2)] for y in range(offset*2)]
+    # I was getting over-complicated here with offsets etc, thinking
+    # that there would be negative point values. But by the time the 
+    # letters are in focus that isn't an issue, so the regular bounding
+    # values are fine  
+    grid = [['.' for x in range(max_x+1)] for y in range(max_y+1)]
     for coord in coordinates:
-        x = coord[0][0] + x_offset + (coord[1][0]*seconds)
-        y = coord[0][1] + y_offset + (coord[1][1]*seconds)
-        if x < min_x: min_x = x
-        if x > max_x: max_x = x
-        if y < min_y: min_y = y
-        if y > max_y: max_y = y
-        grid[x][y] = '#'
+        x = coord[0][0] + (coord[1][0]*seconds)
+        y = coord[0][1] + (coord[1][1]*seconds)
+        # This is the tricky bit! The way the grid prints out on the console
+        # is different from how it is stored in memory. So the points need
+        # to be 'rotated' by swapping the x and y values
+        grid[y][x] = '#'
 
-    # I wasn't visualizing the layout of the grid correctly
-    # because the rows ended up printing out a mirror image.
-    # Doing a reverse on the row fixed that. Also I was too
-    # generous with my grid size, so I had to trim a lot to 
-    # see it in my console (another symptom of not visualzing
-    # the grid correctly). 
-    for row in grid[min_x+250:max_x+10]:
-        row.reverse()
-        print(''.join(row[min_y+30:max_y-200]))
+    # Keep the swap in place for printing and trim
+    # according to the min x and y values
+    for row in grid[min_y-1:]:
+        print(''.join(row[min_x - 1:]))
     
 print('Solution 10.2:', seconds)
 
