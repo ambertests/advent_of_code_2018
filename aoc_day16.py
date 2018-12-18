@@ -108,10 +108,13 @@ while None in codes:
         valid = []
         for op in opcodes:
             opnum = s[1][0]
+            # only check the codes that haven't been validated
             if op not in codes:
                 eval_str = '%s(%s,%s)' % (op, s[1], s[0])
                 if eval(eval_str) == s[2]: 
                     valid.append((opnum,op))
+        # if there is only one valid solution 
+        # assign the code to that number
         if len(valid) == 1: 
             codes[valid[0][0]] = valid[0][1]
 
