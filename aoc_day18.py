@@ -64,37 +64,43 @@ def calculate_map(map):
     return tree_count * yard_count
 
 map = parse(open("input/input18.txt").read())
-# print_map(map)
+total_minutes = 1000000000
 
-# Observed repeating pattern after
-# 475 minutes. Would be nice to find
-# a way to determine this programmatically
-# since this probably only works for
-# my specific input
-deltas = [-4069,-3506,-6435,-3051,
--345,-448,-383,3842,
-1472,3026,1264,2048,
-1112,6562,4698,6616,
-5279,4481,1184,5672,
-320,-3542,-1962,-1195,
--6809,-4332,-4070,-7429]
-
-repeat_starts = 475
-minutes = 1000000000
-
-for i in range(repeat_starts):
-    if i == 10: print('Solution 18.1:', calculate_map(map))
+deltas = set()
+repeated = []
+minute = 0
+score = 0
+streak = 0
+while minute < total_minutes:
     map = update_map(map)
+    new_score = calculate_map(map)
+    if minute == 9: print('Solution 18.1:', calculate_map(map))
+    delta = new_score - score
+    if delta in deltas:
+        # once the repeat streak is equal to the length
+        # of repeated deltas, the pattern is established
+        if delta in repeated and streak % len(repeated) == 0:
+            break
+        else: 
+            streak += 1
+            repeated.append(delta)
+    else:
+        streak = 0
+        repeated.clear()
+        deltas.add(delta)
+    score = new_score
+    minute += 1
 
-score = calculate_map(map)
+remaining_minutes = total_minutes - minute
 
-remaining_minutes = minutes - repeat_starts
-full_cycles = remaining_minutes / len(deltas)
-remainder = remaining_minutes % len(deltas)
+# number of times to apply the full set of deltas
+full_cycles = remaining_minutes / len(repeated) 
 
-final_score = score + (full_cycles*sum(deltas)) + sum(deltas[:remainder])
+# number of leftover deltas to apply at the end
+remainder = remaining_minutes % len(repeated) 
+
+final_score = score + (full_cycles*sum(repeated)) + sum(repeated[:remainder])
 print('Solution 18.2', int(final_score))
 
-#print(calculate_map(map))  
       
 
